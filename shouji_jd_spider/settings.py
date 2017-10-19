@@ -13,7 +13,10 @@ BOT_NAME = 'shouji_jd_spider'
 
 SPIDER_MODULES = ['shouji_jd_spider.spiders']
 NEWSPIDER_MODULE = 'shouji_jd_spider.spiders'
-
+FEED_EXPORT_ENCODING = 'utf-8'
+ITEM_PIPELINES = {
+    'shouji_jd_spider.pipelines.ShoujiJdSpiderPipeline':300
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'shouji_jd_spider (+http://www.yourdomain.com)'
