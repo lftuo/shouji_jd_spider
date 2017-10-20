@@ -16,8 +16,8 @@ class ShoujiJdSpiderPipeline(object):
 
     def process_item(self, item, spider):
         #if item['link']:
-        line = json.dumps(dict(item)) + "\n"
-        self.file.write(line.decode("unicode_escape"))
+        line = json.dumps(dict(item),ensure_ascii=False).decode('utf8') + "\n"
+        self.file.write(line)
         return item
         #else:
             #raise DropItem("Missing title in %s" % item)

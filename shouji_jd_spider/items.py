@@ -12,7 +12,7 @@ class ShoujiJdSpiderItem(scrapy.Item):
     # define the fields for your item here like:
     url = scrapy.Field()
     title = scrapy.Field()  # 商品链接
-    #ID = scrapy.Field()  # 商品ID
+    ID = scrapy.Field()  # 商品ID
     #name = scrapy.Field()  # 商品名字
     #model = scrapy.Field()
     #price = scrapy.Field()
