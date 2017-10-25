@@ -21,7 +21,8 @@ class shouji_jd_spider(scrapy.Spider):
     name = "jd_spider"
     allowed_domins = ["jd.com"]
     start_urls = []
-    for i in range(49,50):
+    # 173为总页数，不做爬取，直接登录https://list.jd.com/list.html?cat=9987,653,655查看总页数
+    for i in range(173):
         url = 'https://list.jd.com/list.html?cat=9987,653,655&page=' + str(i+1)
         start_urls.append(url)
 
@@ -30,8 +31,8 @@ class shouji_jd_spider(scrapy.Spider):
         for phone in phones:
             detail_url = phone.xpath("./div/div[@class='p-img']/a/@href").extract()[0]
             id = detail_url.split("/")[len(detail_url.split("/"))-1].split(".")[0]
-            #url = urlparse.urljoin('https://list.jd.com',detail_url)
-            url = "https://item.jd.com/1978547686.html"
+            url = urlparse.urljoin('https://list.jd.com',detail_url)
+            #url = "https://item.jd.com/10867734050.html"
             item = ShoujiJdSpiderItem(id=id,url=url)
             request = scrapy.Request(url=url,callback=self.parse_detail)
             request.meta['item'] = item
@@ -59,9 +60,7 @@ class shouji_jd_spider(scrapy.Spider):
         battery = ""
 
         # 解析标题
-        print response.xpath("normalize-space(.//div[@class='itemInfo-wrap']/div[@class='sku-name']/text())")
-        title = response.xpath("normalize-space(.//div[@class='sku-name']/text())").extract()[0]
-        print title
+        title = response.xpath(".//div[@class='sku-name']").xpath("normalize-space(string(.))").extract()[0]
         # 解析价格
         id = item['id']
         if id != "":
@@ -85,11 +84,19 @@ class shouji_jd_spider(scrapy.Spider):
                         for dt in dts:
                             current_dt = dt.xpath("./text()").extract()[0]
                             if current_dt == '型号'.encode('utf-8'):
-                                type1 = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                # 中间有可能存在链接
+                                if len(dt.xpath("./following-sibling::*")[0].xpath("./@class")) > 0 :
+                                    type1 = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                else:
+                                    type1 = dt.xpath("./following-sibling::*")[0].xpath("./text()").extract()[0]
                             elif current_dt == '入网型号'.encode('utf-8'):
-                                type2 = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                # 中间有可能存在链接
+                                if len(dt.xpath("./following-sibling::*")[0].xpath("./@class")) > 0:
+                                    type2 = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                else:
+                                    type2 = dt.xpath("./following-sibling::*")[0].xpath("./text()").extract()[0]
                             elif current_dt == '上市年份'.encode('utf-8'):
-                                time += dt.xpath("./following-sibling::*")[0].xpath("./text()").extract()[0]
+                                time += (dt.xpath("./following-sibling::*")[0].xpath("./text()").extract()[0]+" ")
                             elif current_dt == '上市月份'.encode('utf-8'):
                                 time += dt.xpath("./following-sibling::*")[0].xpath("./text()").extract()[0]
                     elif res == '基本信息'.encode('utf-8'):
@@ -156,7 +163,7 @@ class shouji_jd_spider(scrapy.Spider):
                     elif name == '入网型号'.encode('utf-8'):
                         type2 = value
                     elif name == '上市年份'.encode('utf-8'):
-                        time += value
+                        time += (value+" ")
                     elif name == '上市月份'.encode('utf-8'):
                         time += value
                     elif name == '机身颜色'.encode('utf-8'):
