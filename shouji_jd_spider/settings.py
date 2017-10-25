@@ -17,7 +17,13 @@ FEED_EXPORT_ENCODING = 'utf-8'
 ITEM_PIPELINES = {
     'shouji_jd_spider.pipelines.ShoujiJdSpiderPipeline':300
 }
+#Mysql数据库的配置信息
+MYSQL_HOST = '127.0.0.1'
+MYSQL_DBNAME = 'spider_shouji'         #数据库名字，请修改
+MYSQL_USER = 'root'             #数据库账号，请修改
+MYSQL_PASSWD = '123456'         #数据库密码，请修改
 
+MYSQL_PORT = 3306
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'shouji_jd_spider (+http://www.yourdomain.com)'
 
