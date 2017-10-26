@@ -25,7 +25,7 @@ class shouji_jd_spider(scrapy.Spider):
     # 设置爬虫爬取URL
     start_urls = []
     # 173为总页数，不做爬取，直接登录https://list.jd.com/list.html?cat=9987,653,655查看总页数
-    for i in range(173):
+    for i in range(1):
         url = 'https://list.jd.com/list.html?cat=9987,653,655&page=' + str(i+1)
         start_urls.append(url)
 
@@ -39,7 +39,8 @@ class shouji_jd_spider(scrapy.Spider):
             detail_url = phone.xpath("./div/div[@class='p-img']/a/@href").extract()[0]
             # 截取手机销售编号
             id = detail_url.split("/")[len(detail_url.split("/"))-1].split(".")[0]
-            url = urlparse.urljoin('https://list.jd.com',detail_url)
+            #url = urlparse.urljoin('https://list.jd.com',detail_url)
+            url = "https://item.jd.com/11391062877.html"
             item = ShoujiJdSpiderItem(id=id,url=url)
             # 回调parse_detail函数进行详情解析
             request = scrapy.Request(url=url,callback=self.parse_detail)
@@ -70,7 +71,8 @@ class shouji_jd_spider(scrapy.Spider):
         battery = ""
 
         # 解析标题
-        title = response.xpath(".//div[@class='sku-name']").xpath("normalize-space(string(.))").extract()[0]
+        if len(response.xpath(".//div[@class='sku-name']").xpath("normalize-space(string(.))")) > 0:
+            title = response.xpath(".//div[@class='sku-name']").xpath("normalize-space(string(.))").extract()[0]
         # 解析价格
         id = item['id']
         if id != "":
@@ -142,9 +144,15 @@ class shouji_jd_spider(scrapy.Spider):
                         for dt in dts:
                             current_dt = dt.xpath("./text()").extract()[0]
                             if current_dt == 'ROM':
-                                rom = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                if len(dt.xpath("./following-sibling::*")[0].xpath("./@class")) > 0:
+                                    rom = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                else:
+                                    rom = dt.xpath("./following-sibling::*")[0].xpath("./text()").extract()[0]
                             elif current_dt == 'RAM':
-                                ram = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                if len(dt.xpath("./following-sibling::*")[0].xpath("./@class")) > 0:
+                                    ram = dt.xpath("./following-sibling::*")[1].xpath("./text()").extract()[0]
+                                else:
+                                    ram = dt.xpath("./following-sibling::*")[0].xpath("./text()").extract()[0]
                     elif res == '屏幕'.encode('utf-8'):
                         dts = param_table.xpath("./dl/dt")
                         for dt in dts:
