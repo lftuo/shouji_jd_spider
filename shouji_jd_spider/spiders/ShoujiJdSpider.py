@@ -18,26 +18,36 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 class shouji_jd_spider(scrapy.Spider):
+    # 设置爬虫名称
     name = "jd_spider"
+    # 设置爬虫运行域名
     allowed_domins = ["jd.com"]
+    # 设置爬虫爬取URL
     start_urls = []
     # 173为总页数，不做爬取，直接登录https://list.jd.com/list.html?cat=9987,653,655查看总页数
     for i in range(173):
         url = 'https://list.jd.com/list.html?cat=9987,653,655&page=' + str(i+1)
         start_urls.append(url)
 
+    '''
+    解析手机的URL及id，有scrapy框架默认调用
+    '''
     def parse(self, response):
         phones = response.xpath(".//*[@class='gl-item']")
         for phone in phones:
+            # 解析手机详情页链接
             detail_url = phone.xpath("./div/div[@class='p-img']/a/@href").extract()[0]
+            # 截取手机销售编号
             id = detail_url.split("/")[len(detail_url.split("/"))-1].split(".")[0]
             url = urlparse.urljoin('https://list.jd.com',detail_url)
-            #url = "https://item.jd.com/10867734050.html"
             item = ShoujiJdSpiderItem(id=id,url=url)
+            # 回调parse_detail函数进行详情解析
             request = scrapy.Request(url=url,callback=self.parse_detail)
             request.meta['item'] = item
             yield request
-
+    '''
+    解析手机的详细参数：内存、尺寸、电池容量、价格、操作系统、核数等
+    '''
     def parse_detail(self,response):
         item = response.meta['item']
         title = ""
@@ -217,6 +227,7 @@ class shouji_jd_spider(scrapy.Spider):
 
 
 if __name__ == '__main__':
+    # 启动爬虫jd_spider
     process = CrawlerProcess(get_project_settings())
     process.crawl('jd_spider')
     process.start()
