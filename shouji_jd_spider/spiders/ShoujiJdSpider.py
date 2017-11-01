@@ -25,7 +25,7 @@ class shouji_jd_spider(scrapy.Spider):
     # 设置爬虫爬取URL
     start_urls = []
     # 173为总页数，不做爬取，直接登录https://list.jd.com/list.html?cat=9987,653,655查看总页数
-    for i in range(1):
+    for i in range(174):
         url = 'https://list.jd.com/list.html?cat=9987,653,655&page=' + str(i+1)
         start_urls.append(url)
 
@@ -39,8 +39,8 @@ class shouji_jd_spider(scrapy.Spider):
             detail_url = phone.xpath("./div/div[@class='p-img']/a/@href").extract()[0]
             # 截取手机销售编号
             id = detail_url.split("/")[len(detail_url.split("/"))-1].split(".")[0]
-            #url = urlparse.urljoin('https://list.jd.com',detail_url)
-            url = "https://item.jd.com/11391062877.html"
+            url = urlparse.urljoin('https://list.jd.com',detail_url)
+            #url = "https://item.jd.com/11391062877.html"
             item = ShoujiJdSpiderItem(id=id,url=url)
             # 回调parse_detail函数进行详情解析
             request = scrapy.Request(url=url,callback=self.parse_detail)
