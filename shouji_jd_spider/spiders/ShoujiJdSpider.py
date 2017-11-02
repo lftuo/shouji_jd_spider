@@ -231,6 +231,7 @@ class shouji_jd_spider(scrapy.Spider):
         item['resolution'] = resolution
         item['screen_material'] = screen_material
         item['battery'] = battery
+        item['data_source'] = '京东'
         yield item
 
 
