@@ -217,6 +217,8 @@ class shouji_jd_spider(scrapy.Spider):
         item['price'] = price
         item['type1'] = type1
         item['type2'] = type2
+        # 复制type1字段为model字段
+        item['model'] = type1
         item['time'] = time
         item['phone_color'] = phone_color
         item['phone_material'] = phone_material
