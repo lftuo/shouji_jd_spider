@@ -41,9 +41,9 @@ class ShoujiJdSpiderPipeline(object):
 
     # 写入数据库中
     def _conditional_insert(self, tx, item):
-        sql = "insert into shouji_jd_spider_data(id,title,price,type1,type2,time,phone_color,phone_material,opreating_system,cpu_name,core_nums,sim,sim_max_nums,rom,ram,screen_size,resolution,screen_material,battery,url,data_source) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sql = "insert into shouji_jd_spider_data(id,title,price,type1,type2,model,time,phone_color,phone_material,opreating_system,cpu_name,core_nums,sim,sim_max_nums,rom,ram,screen_size,resolution,screen_material,battery,url,data_source) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         try:
-            params = (item["id"],item["title"],item["price"],item["type1"],item["type2"],item["time"],item["phone_color"],item["phone_material"],item["opreating_system"],item["cpu_name"],item["core_nums"],item["sim"],item["sim_max_nums"],item["rom"],item["ram"],item["screen_size"],item["resolution"],item["screen_material"],item["battery"],item["url"],item["data_source"])
+            params = (item["id"],item["title"],item["price"],item["type1"],item["type2"],item["model"],item["time"],item["phone_color"],item["phone_material"],item["opreating_system"],item["cpu_name"],item["core_nums"],item["sim"],item["sim_max_nums"],item["rom"],item["ram"],item["screen_size"],item["resolution"],item["screen_material"],item["battery"],item["url"],item["data_source"])
             tx.execute(sql, params)
         except Exception,e:
             logging.exception(e)
