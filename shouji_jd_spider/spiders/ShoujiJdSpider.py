@@ -29,10 +29,13 @@ class shouji_jd_spider(scrapy.Spider):
         url = 'https://list.jd.com/list.html?cat=9987,653,655&page=' + str(i+1)
         start_urls.append(url)
 
-    '''
-    解析手机的URL及id，有scrapy框架默认调用
-    '''
     def parse(self, response):
+        '''
+        解析手机的URL及id，由scrapy框架默认调用
+        :param response:
+        :return:
+        '''
+
         phones = response.xpath(".//*[@class='gl-item']")
         for phone in phones:
             # 解析手机详情页链接
@@ -46,10 +49,14 @@ class shouji_jd_spider(scrapy.Spider):
             request = scrapy.Request(url=url,callback=self.parse_detail)
             request.meta['item'] = item
             yield request
-    '''
-    解析手机的详细参数：内存、尺寸、电池容量、价格、操作系统、核数等
-    '''
+
     def parse_detail(self,response):
+        '''
+        解析手机的详细参数：内存、尺寸、电池容量、价格、操作系统、核数等
+        :param response:
+        :return:
+        '''
+
         item = response.meta['item']
         title = ""
         price = ""
